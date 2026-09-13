@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Chào bạn, quy trình chung để gửi yêu cầu hỗ trợ IT trong công ty là gì?",
+    "expected_behavior": "Agent trả lời trực tiếp từ System Prompt, không cần gọi Tool nào.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Hãy tra cứu tình trạng ticket TCK-1001 giúp tôi.",
+    "expected_behavior": "Agent gọi Tool 'it_ticket_query' với ticket_id 'TCK-1001'.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "ticket_creation",
+    "question": "Tôi là nhân viên NV2026003, laptop của tôi không cài được phần mềm, mức độ khá gấp, hãy tạo giúp tôi 1 yêu cầu hỗ trợ.",
+    "expected_behavior": "Agent gọi Tool 'create_support_ticket' với issue_type 'software', priority 'high'.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Ticket TCK-1002 của tôi xử lý tới đâu rồi? Nếu chưa xong thì tạo giúp tôi 1 ticket mới ưu tiên cao để escalate.",
+    "expected_behavior": "Agent tra cứu 'it_ticket_query' trước, đọc status; vì TCK-1002 đã RESOLVED nên không tạo ticket mới (hoặc tạo nếu bạn đổi status).",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Tra cứu giúp tôi ticket TCK-9999.",
+    "expected_behavior": "Agent nhận NOT_FOUND từ Tool và phản hồi lịch sự, không bịa dữ liệu.",
+    "complexity": "Medium"
+  }
+] 
