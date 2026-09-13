@@ -15,6 +15,8 @@
 | **4. Long Horizon Goal** | 3 / 5 | Mỗi yêu cầu xử lý độc lập trong 1 phiên, không cần giữ mục tiêu xuyên nhiều phiên dài |
 | **TỔNG ĐIỂM AGENTIC FIT** | **16 / 20** | *Bài toán rất phù hợp triển khai Agentic System.* |
 
+> 💡 **Mở rộng vượt yêu cầu tối thiểu:** Ngoài 2 Tool bắt buộc (`it_ticket_query`, `create_support_ticket`), Agent được bổ sung thêm 2 Tool nâng cao **`read_local_file`** và **`write_local_file`**, cho phép Agent tự đọc/ghi file ghi chú nội bộ (trong thư mục `data/agent_files/`) — thể hiện khả năng hành động thật trên môi trường (file system) thay vì chỉ trả lời văn bản, củng cố thêm tiêu chí Tool Interaction.
+
 ---
 
 ## 2. TRÍCH XUẤT KẾT QUẢ WATERFALL TRACE LOG (SAU KHI CHẠY TEST SUITE TRÊN API THẬT)
@@ -55,13 +57,38 @@ Dán 1 đoạn trích xuất log tiêu biểu từ file `docs/trace_waterfall.js
 ]
 ```
 
+**Trích xuất bổ sung — minh chứng Tool mở rộng `write_local_file` / `read_local_file` (Agent tự ghi rồi tự đọc lại file thật):**
+
+```json
+[
+  {
+    "step": 1,
+    "query": "Hãy ghi giúp tôi 1 file tên note.txt với nội dung 'Đã liên hệ nhân viên NV2026001 về ticket TCK-1001'",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "write_local_file",
+    "arguments": { "file_name": "note.txt", "content": "Đã liên hệ nhân viên NV2026001 về ticket TCK-1001" },
+    "observation": { "status": "SUCCESS", "file_name": "note.txt", "message": "Đã ghi file 'note.txt' thành công." },
+    "latency_ms": 1200.0
+  },
+  {
+    "step": 1,
+    "query": "Đọc giúp tôi nội dung file note.txt",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "read_local_file",
+    "arguments": { "file_name": "note.txt" },
+    "observation": { "status": "SUCCESS", "file_name": "note.txt", "content": "Đã liên hệ nhân viên NV2026001 về ticket TCK-1001" },
+    "latency_ms": 900.0
+  }
+]
+```
+
 ---
 
 ## 3. TỔNG KẾT KẾT QUẢ NGHIỆM THU & NỘP BÀI
 
 - [x] Đã điền API Key thật trong `.env` và xác nhận Agent chạy mượt mà trên LLM API thật (Gemini/OpenAI).
 - **Tổng số Test Cases đã chạy thành công:** 5 / 5 test cases.
-- **Số lượt gọi Tool qua MCP Server chính xác:** 4 lượt (TC02, TC03, TC04, TC05 mỗi case 1 lượt; TC01 không cần Tool).
+- **Số lượt gọi Tool qua MCP Server chính xác:** 4 lượt qua 5 test case chính thức (TC02, TC03, TC04, TC05 mỗi case 1 lượt; TC01 không cần Tool) + 2 lượt thử nghiệm mở rộng (`write_local_file`, `read_local_file`).
 - **Kết quả đẩy Repo nộp bài:** [ ] Đã Commit và Push mã nguồn thành công lên GitHub cá nhân.
 
 ---

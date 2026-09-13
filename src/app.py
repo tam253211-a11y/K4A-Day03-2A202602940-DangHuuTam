@@ -127,19 +127,23 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPAcademicServer) ->
                             f"Ưu tiên: {d.get('priority', '')}, Phụ trách: {d.get('assigned_to', '')}, "
                             f"Cập nhật lần cuối: {d.get('last_update', '')}."
                         )
+                    elif "content" in obs_data:
+                        final_answer = (
+                            f"Nội dung file '{obs_data.get('file_name', '')}':\n{obs_data['content']}"
+                        )
                     elif "message" in obs_data:
                         final_answer = obs_data["message"]
                     else:
                         final_answer = f"Đã hoàn tất xử lý qua MCP Server: {json.dumps(obs_data, ensure_ascii=False)}"
                 elif obs_data.get("status") == "NOT_FOUND":
-                    final_answer = obs_data.get("message", "Không tìm thấy thông tin sinh viên yêu cầu.")
+                    final_answer = obs_data.get("message", "Không tìm thấy thông tin ticket yêu cầu.")
                 else:
                     final_answer = f"Phản hồi từ công cụ: {json.dumps(obs_data, ensure_ascii=False)}"
             
             trace_logs.append({
                 "step": step,
                 "query": user_query,
-                "action_type": "TOOL_EXECUTION",
+                "action_type": "TOOL_EXECUTION", 
                 "tool_name": tool_name,
                 "arguments": arguments,
                 "observation": obs_data,

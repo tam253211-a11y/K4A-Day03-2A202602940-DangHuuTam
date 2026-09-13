@@ -4,6 +4,7 @@ Mã nguồn chứa danh sách Tool Schemas (JSON Schema) và Execution Layer ph�
 """
 
 import json
+import os
 from typing import Dict, Any
 
 # ==============================================================================
@@ -52,6 +53,40 @@ TOOLS_SCHEMA = [
                 }
             },
             "required": ["employee_id", "issue_type", "description"]
+        }
+    },
+
+    {
+        "name": "read_local_file",
+        "description": "Đọc nội dung một file văn bản nội bộ (ví dụ log sự cố, ghi chú xử lý) đã lưu trong thư mục dữ liệu của Agent.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "type": "string",
+                    "description": "Tên file cần đọc, không kèm đường dẫn thư mục (ví dụ: 'incident_log.txt')"
+                }
+            },
+            "required": ["file_name"]
+        }
+    },
+
+    {
+        "name": "write_local_file",
+        "description": "Ghi hoặc tạo mới một file văn bản nội bộ với nội dung cho trước, dùng để lưu ghi chú, tóm tắt hoặc báo cáo xử lý.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "type": "string",
+                    "description": "Tên file cần ghi, không kèm đường dẫn thư mục (ví dụ: 'summary.txt')"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Nội dung văn bản cần ghi vào file"
+                }
+            },
+            "required": ["file_name", "content"]
         }
     }
 ]
@@ -111,11 +146,49 @@ def execute_create_support_ticket(employee_id: str, issue_type: str, description
     }, ensure_ascii=False)
 
 
+# Thư mục dữ liệu riêng cho Agent đọc/ghi file — giới hạn trong phạm vi này để an toàn,
+# không cho phép Agent đọc/ghi ra ngoài (ví dụ mã nguồn dự án).
+AGENT_FILES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "agent_files")
+os.makedirs(AGENT_FILES_DIR, exist_ok=True)
+
+
+def execute_read_local_file(file_name: str) -> str:
+    """Thực thi đọc nội dung file trong thư mục dữ liệu Agent"""
+    safe_name = os.path.basename(file_name)
+    path = os.path.join(AGENT_FILES_DIR, safe_name)
+    if not os.path.exists(path):
+        return json.dumps({
+            "status": "NOT_FOUND",
+            "message": f"Không tìm thấy file '{safe_name}' trong thư mục dữ liệu Agent."
+        }, ensure_ascii=False)
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    return json.dumps({
+        "status": "SUCCESS",
+        "file_name": safe_name,
+        "content": content
+    }, ensure_ascii=False)
+
+
+def execute_write_local_file(file_name: str, content: str) -> str:
+    """Thực thi ghi/tạo file trong thư mục dữ liệu Agent"""
+    safe_name = os.path.basename(file_name)
+    path = os.path.join(AGENT_FILES_DIR, safe_name)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return json.dumps({
+        "status": "SUCCESS",
+        "file_name": safe_name,
+        "message": f"Đã ghi file '{safe_name}' thành công."
+    }, ensure_ascii=False)
+
 
 # Router gọi tool thực tế
 TOOL_ROUTER = {
     "it_ticket_query": execute_it_ticket_query,
-    "create_support_ticket": execute_create_support_ticket
+    "create_support_ticket": execute_create_support_ticket,
+    "read_local_file": execute_read_local_file,
+    "write_local_file": execute_write_local_file
 }
 
 def dispatch_tool_call(tool_name: str, arguments: Dict[str, Any]) -> str:

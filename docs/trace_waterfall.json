@@ -1,33 +1,33 @@
 [
   {
     "step": 1,
-    "query": "Hãy tra cứu tình trạng ticket TCK-1001 giúp tôi",
+    "query": "Cho tôi biết tình trạng xử lý của ticket TCK-1002",
     "action_type": "TOOL_EXECUTION",
     "tool_name": "it_ticket_query",
     "arguments": {
-      "ticket_id": "TCK-1001"
+      "ticket_id": "TCK-1002"
     },
     "observation": {
       "status": "SUCCESS",
-      "ticket_id": "TCK-1001",
+      "ticket_id": "TCK-1002",
       "data": {
-        "employee_id": "NV2026001",
-        "issue_type": "network",
-        "description": "Không kết nối được VPN công ty",
-        "status": "IN_PROGRESS",
-        "priority": "high",
-        "assigned_to": "IT Support - Nguyễn Văn C",
-        "last_update": "2026-09-12 09:30"
+        "employee_id": "NV2026002",
+        "issue_type": "account",
+        "description": "Quên mật khẩu email công ty",
+        "status": "RESOLVED",
+        "priority": "medium",
+        "assigned_to": "IT Support - Trần Thị D",
+        "last_update": "2026-09-10 14:00"
       }
     },
-    "latency_ms": 1424.95
+    "latency_ms": 9369.86
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu tình trạng ticket TCK-1001 giúp tôi",
+    "query": "Cho tôi biết tình trạng xử lý của ticket TCK-1002",
     "action_type": "FINAL_ANSWER",
     "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Kết quả tra cứu ticket TCK-1001: Loại sự cố: network, Trạng thái: IN_PROGRESS, Ưu tiên: high, Phụ trách: IT Support - Nguyễn Văn C, Cập nhật lần cuối: 2026-09-12 09:30.",
+    "output": "Kết quả tra cứu ticket TCK-1002: Loại sự cố: account, Trạng thái: RESOLVED, Ưu tiên: medium, Phụ trách: IT Support - Trần Thị D, Cập nhật lần cuối: 2026-09-10 14:00.",
     "latency_ms": 10.0
   }
 ]
